@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Simples</title>
+    <style>
+       {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            width: 400px;
+            height: 500px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+        .chat-box {
+            flex-grow: 1;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #fafafa;
+        }
+        .message {
+            margin: 5px 0;
+            padding: 8px;
+            background-color: #e0f7fa;
+            border-radius: 10px;
+            max-width: 70%;
+        }
+        .message.you {
+            background-color: #ffeb3b;
+            margin-left: auto;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+        }
+        #message-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            padding: 10px 15px;
+            margin-left: 10px;
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #004d40;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div id="chat-box" class="chat-box"></div>
+        <div class="input-container">
+            <input type="text" id="message-input" placeholder="Digite sua mensagem...">
+            <button onclick="enviarMensagem()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        // Função para carregar o histórico de mensagens
+        function carregarHistorico() {
+            const chatBox = document.getElementById('chat-box');
+            const historico = JSON.parse(localStorage.getItem('historicoChat')) || [];
+            chatBox.innerHTML = '';
+            historico.forEach(mensagem => {
+                const div = document.createElement('div');
+                div.classList.add('message');
+                if (mensagem.usuario === 'Você') {
+                    div.classList.add('you'); // Alinha a mensagem para o lado direito
+                }
+                div.textContent = `${mensagem.usuario}: ${mensagem.texto}`;
+                chatBox.appendChild(div);
+            });
+            chatBox.scrollTop = chatBox.scrollHeight; // Rolagem automática para a última mensagem
+        }
+
+        // Função para enviar a mensagem
+        function enviarMensagem() {
+            const messageInput = document.getElementById('message-input');
+            const mensagem = messageInput.value.trim();
+            if (mensagem) {
+                // Armazenando a mensagem no histórico
+                const historico = JSON.parse(localStorage.getItem('historicoChat')) || [];
+                historico.push({ usuario: 'Você', texto: mensagem });
+                localStorage.setItem('historicoChat', JSON.stringify(historico));
+                carregarHistorico();
+                messageInput.value = ''; // Limpar o campo de entrada
+            }
+        }
+
+        // Carregar o histórico quando a página for carregada
+        window.onload = carregarHistorico;
+    </script>
+
+</body>
+</html>
